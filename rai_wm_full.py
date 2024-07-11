@@ -5,9 +5,8 @@ from numpy.linalg import svd
 from cv2 import dct, idct
 from pywt import dwt2, idwt2
 from collections import Counter
-import math
 
-alpha1, alpha2 = 64, 30
+alpha1, alpha2 = 36, 20
 block_size = np.array([4, 4])
 
 def _split_image_from_center(image):
@@ -78,6 +77,7 @@ def embed(cover_path, watermarked_path, wm, pwd: int):
 
     sub_images_covered = []
     for sub_image in sub_images:
+        # image_raw = sub_image[2].astype(np.float32)
         image_raw = sub_image.astype(np.float32)
         image_size = image_raw.shape[:2]
         wm_size, block_num = 0, 0
@@ -86,10 +86,12 @@ def embed(cover_path, watermarked_path, wm, pwd: int):
         coeffi_approx_block = [np.array([])] * 3
         coeffi_approx_part = [np.array([])] * 3
 
-        byte = _hex_to_bits(wm)
+        # byte = _hex_to_bits(wm)
+        byte = bin(int(wm.encode('utf-8').hex(), base=16))[2:]
+
         wm_bits = (np.array(list(byte)) == '1')
         wm_size = wm_bits.size
-        # np.random.RandomState(pwd).shuffle(wm_bits)
+        np.random.RandomState(pwd).shuffle(wm_bits)
 
         coeffi_approx_size = [(i + 1) // 2 for i in image_size]
 
@@ -155,55 +157,29 @@ def embed(cover_path, watermarked_path, wm, pwd: int):
         covered_img = cv2.cvtColor(covered_image_YUV, cv2.COLOR_YUV2BGR)
         covered_img = np.clip(covered_img, a_min=0, a_max=255)
 
-        # sub_images_covered.append((sub_image[0], sub_image[1], covered_img))
-        sub_images_covered.append(covered_img)
+        sub_images_covered.append((sub_image[0], sub_image[1], covered_img))
 
     # ret = _reassemble_image(sub_images_covered, image_full.shape, watermarked_path)
-    # cv2.imwrite(watermarked_path, ret)
-    cv2.imwrite(watermarked_path, sub_images_covered[0])
+    ret = sub_images_covered[0][2]
 
-def adjust_aspect_ratio(image_path, known_ratios=[(2, 3), (4, 3), (16, 9), (21, 9)]):
-    image = cv2.imread(image_path)
-    height, width = image.shape[:2]
+    cv2.imwrite(watermarked_path, ret)
 
-    gcd = math.gcd(width, height)
-    current_ratio = (width // gcd, height // gcd)
 
-    best_ratio = min(known_ratios, key=lambda ratio: abs(ratio[0] / ratio[1] - current_ratio[0] / current_ratio[1]))
-
-    if current_ratio != best_ratio:
-        new_width = width if best_ratio[0] / best_ratio[1] > current_ratio[0] / current_ratio[1] else int(height * best_ratio[0] / best_ratio[1])
-        new_height = height if best_ratio[0] / best_ratio[1] < current_ratio[0] / current_ratio[1] else int(width * best_ratio[1] / best_ratio[0])
-        image = cv2.resize(image, (new_width, new_height))
-
-    return image
-
-def unembed(wm_pic_path, pwd: int, pattern=('666', '666')):
+def unembed(wm_pic_path, pwd: int):
     image_full = cv2.imread(wm_pic_path, flags=cv2.IMREAD_UNCHANGED)
     
     # sub_images = _split_image_from_center(image_full)
     sub_images = [image_full]
 
-    height, width = image_full.shape[:2]
-    gcd = math.gcd(width, height)
-    aspect_ratio = f"{width // gcd}:{height // gcd}"
-    print("Соотношение сторон:", aspect_ratio)
-
-    img = adjust_aspect_ratio(wm_pic_path)
-    height, width = img.shape[:2]
-    gcd = math.gcd(width, height)
-    aspect_ratio = f"{width // gcd}:{height // gcd}"
-    print("Соотношение сторон:", aspect_ratio)
-
     wms_from_blocks = []
-    wms_from_blocks_alter = []
     for sub_image in sub_images:
-        wm_size = 152
+        wm_size = 254
         block_num = 0
         coeffi_approx = [np.array([])] * 3
         hvds = [np.array([])] * 3
         coeffi_approx_block = [np.array([])] * 3
 
+        # image_raw = sub_image[2].astype(np.float32)
         image_raw = sub_image.astype(np.float32)
         image_size = image_raw.shape[:2]
 
@@ -235,7 +211,6 @@ def unembed(wm_pic_path, pwd: int, pattern=('666', '666')):
 
         shuffler_arr = np.random.RandomState(pwd).random(size=(block_num, block_size[0] * block_size[1])).argsort(axis=1)
 
-        wm_all_bits = []
         for channel in range(3):
             tmp_res = []
             for i in range(block_num):
@@ -249,7 +224,6 @@ def unembed(wm_pic_path, pwd: int, pattern=('666', '666')):
                 tmp = (s[1] % alpha2 > alpha2 / 2) * 1
                 wm = (wm * 3 + tmp * 1) / 4
                 tmp_res.append(wm)
-                wm_all_bits.append(wm)
 
             wm_blocks_bit[channel, :] = tmp_res
 
@@ -257,28 +231,21 @@ def unembed(wm_pic_path, pwd: int, pattern=('666', '666')):
         for i in range(wm_size):
             wm_draft[i] = wm_blocks_bit[:, i::wm_size].mean()
 
-        # wm_index = np.arange(wm_size)
-        # np.random.RandomState(pwd).shuffle(wm_index)
-        # wm_draft[wm_index] = wm_draft.copy()
+        wm_index = np.arange(wm_size)
+        np.random.RandomState(pwd).shuffle(wm_index)
+        wm_draft[wm_index] = wm_draft.copy()
 
         byte = ''.join(str((i >= 0.5) * 1) for i in wm_draft)
-        wm = _bits_to_hex(byte)
-        wms_from_blocks.append(wm)
 
-        byte = ''.join(str((i >= 0.5) * 1) for i in wm_all_bits)
-        wm = _bits_to_hex(byte)
-        wms_from_blocks_alter.append(wm)
+        try: 
+            wm = bytes.fromhex(hex(int(byte, base=2))[2:]).decode('utf-8', errors='replace')
+        except:
+            pass
+        # wm = _bits_to_hex(byte)
+
+        wms_from_blocks.append(wm)
 
     string_counts = Counter(wms_from_blocks)
     most_common, _ = string_counts.most_common(1)[0]
-    if not most_common.startswith(pattern[0]):
-        wms_from_blocks.clear()
-        for cur in wms_from_blocks_alter[0].split(pattern[0]):
-            if len(cur) == 32:
-                wms_from_blocks.append(cur)
-
-        string_counts = Counter(wms_from_blocks)
-        most_common, _ = string_counts.most_common(1)[0] if len(wms_from_blocks) else 'none', None
-        most_common = pattern[0] + most_common[0] + pattern[1]
 
     return most_common
