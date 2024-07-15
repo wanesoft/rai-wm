@@ -188,16 +188,16 @@ def unembed(wm_pic_path, pwd: int, pattern=('123', 'abc')):
     # sub_images = _split_image_from_center(image_full)
     sub_images = [image_full]
 
-    height, width = image_full.shape[:2]
-    gcd = math.gcd(width, height)
-    aspect_ratio = f"{width // gcd}:{height // gcd}"
-    print("Соотношение сторон:", aspect_ratio)
+    # height, width = image_full.shape[:2]
+    # gcd = math.gcd(width, height)
+    # aspect_ratio = f"{width // gcd}:{height // gcd}"
+    # print("Соотношение сторон:", aspect_ratio)
 
-    img = adjust_aspect_ratio(wm_pic_path)
-    height, width = img.shape[:2]
-    gcd = math.gcd(width, height)
-    aspect_ratio = f"{width // gcd}:{height // gcd}"
-    print("Соотношение сторон:", aspect_ratio)
+    # img = adjust_aspect_ratio(wm_pic_path)
+    # height, width = img.shape[:2]
+    # gcd = math.gcd(width, height)
+    # aspect_ratio = f"{width // gcd}:{height // gcd}"
+    # print("Соотношение сторон:", aspect_ratio)
 
     wms_from_blocks = []
     wms_from_blocks_alter = []
@@ -291,6 +291,7 @@ def unembed(wm_pic_path, pwd: int, pattern=('123', 'abc')):
 
         string_counts = Counter(wms_from_blocks)
         most_common, _ = string_counts.most_common(1)[0] if len(wms_from_blocks) else 'none', None
-        most_common = pattern[0] + most_common[0] + pattern[1]
+        if len(most_common[0]) == 32:
+            most_common = pattern[0] + most_common[0] + pattern[1]
 
     return most_common
