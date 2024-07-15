@@ -7,7 +7,7 @@ from pywt import dwt2, idwt2
 from collections import Counter
 import math
 
-alpha1, alpha2 = 64, 30
+alpha1, alpha2 = 16, 4
 block_size = np.array([4, 4])
 
 def _split_image_from_center(image):
@@ -86,10 +86,14 @@ def embed(cover_path, watermarked_path, wm, pwd: int):
         coeffi_approx_block = [np.array([])] * 3
         coeffi_approx_part = [np.array([])] * 3
 
+        # byte = bin(int(wm.encode('utf-8').hex(), base=16))[2:]
+        # wm_bits = (np.array(list(byte)) == '1')
+        # wm_size = wm_bits.size
+
         byte = _hex_to_bits(wm)
         wm_bits = (np.array(list(byte)) == '1')
         wm_size = wm_bits.size
-        # np.random.RandomState(pwd).shuffle(wm_bits)
+        np.random.RandomState(pwd).shuffle(wm_bits)
 
         coeffi_approx_size = [(i + 1) // 2 for i in image_size]
 
@@ -178,7 +182,7 @@ def adjust_aspect_ratio(image_path, known_ratios=[(2, 3), (4, 3), (16, 9), (21, 
 
     return image
 
-def unembed(wm_pic_path, pwd: int, pattern=('666', '666')):
+def unembed(wm_pic_path, pwd: int, pattern=('123', 'abc')):
     image_full = cv2.imread(wm_pic_path, flags=cv2.IMREAD_UNCHANGED)
     
     # sub_images = _split_image_from_center(image_full)
@@ -242,6 +246,7 @@ def unembed(wm_pic_path, pwd: int, pattern=('666', '666')):
                 block, shuffler, i = coeffi_approx_block[channel][block_index[i]], shuffler_arr[i], i
 
                 block_dct_shuffled = dct(block).flatten()[shuffler].reshape(block_size)
+                # block_dct_shuffled = dct(block)
 
                 _, s, _ = svd(block_dct_shuffled)
 
@@ -257,9 +262,13 @@ def unembed(wm_pic_path, pwd: int, pattern=('666', '666')):
         for i in range(wm_size):
             wm_draft[i] = wm_blocks_bit[:, i::wm_size].mean()
 
-        # wm_index = np.arange(wm_size)
-        # np.random.RandomState(pwd).shuffle(wm_index)
-        # wm_draft[wm_index] = wm_draft.copy()
+        wm_index = np.arange(wm_size)
+        np.random.RandomState(pwd).shuffle(wm_index)
+        wm_draft[wm_index] = wm_draft.copy()
+
+        # byte = ''.join(str((i >= 0.5) * 1) for i in wm_draft)
+        # wm = bytes.fromhex(hex(int(byte, base=2))[2:]).decode('utf-8', errors='replace')
+        # return wm
 
         byte = ''.join(str((i >= 0.5) * 1) for i in wm_draft)
         wm = _bits_to_hex(byte)
@@ -268,14 +277,17 @@ def unembed(wm_pic_path, pwd: int, pattern=('666', '666')):
         byte = ''.join(str((i >= 0.5) * 1) for i in wm_all_bits)
         wm = _bits_to_hex(byte)
         wms_from_blocks_alter.append(wm)
+        # print(wm.split(pattern[0]))
 
     string_counts = Counter(wms_from_blocks)
     most_common, _ = string_counts.most_common(1)[0]
-    if not most_common.startswith(pattern[0]):
+    if not most_common.startswith(pattern[0]) or not most_common.endswith(pattern[1]):
         wms_from_blocks.clear()
         for cur in wms_from_blocks_alter[0].split(pattern[0]):
-            if len(cur) == 32:
-                wms_from_blocks.append(cur)
+            if pattern[1] in cur:
+                for cur2 in cur.split(pattern[1]):
+                    if len(cur2) == 32:
+                        wms_from_blocks.append(cur2)
 
         string_counts = Counter(wms_from_blocks)
         most_common, _ = string_counts.most_common(1)[0] if len(wms_from_blocks) else 'none', None
