@@ -6,9 +6,15 @@ from cv2 import dct, idct
 from pywt import dwt2, idwt2
 from collections import Counter
 import math
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('TkAgg')
 
 alpha1, alpha2 = 16, 4
 block_size = np.array([4, 4])
+
+# import pywt
+# print(pywt.wavelist(kind='discrete'))
 
 def _split_image_from_center(image):
     height, width = image.shape[:2]
@@ -70,7 +76,7 @@ def _bits_to_hex(bits_string):
         hex_string += hex(int(bits_chunk, 2))[2:]
     return hex_string
 
-def embed(cover_path, watermarked_path, wm, pwd: int):
+def embed(cover_path, watermarked_path, wm, pwd: int, wavelet='haar'):
     image_full = cv2.imread(cover_path, flags=cv2.IMREAD_UNCHANGED)
     
     # sub_images = _split_image_from_center(image_full)
@@ -93,7 +99,7 @@ def embed(cover_path, watermarked_path, wm, pwd: int):
         byte = _hex_to_bits(wm)
         wm_bits = (np.array(list(byte)) == '1')
         wm_size = wm_bits.size
-        np.random.RandomState(pwd).shuffle(wm_bits)
+        # np.random.RandomState(pwd).shuffle(wm_bits)
 
         coeffi_approx_size = [(i + 1) // 2 for i in image_size]
 
@@ -102,11 +108,11 @@ def embed(cover_path, watermarked_path, wm, pwd: int):
         strides = 4 * np.array([coeffi_approx_size[1] * block_size[0], block_size[1], coeffi_approx_size[1], 1])
 
         image_YUV = cv2.copyMakeBorder(cv2.cvtColor(image_raw, cv2.COLOR_BGR2YUV),
-                                    0, image_raw.shape[0] % 2, 0, image_raw.shape[1] % 2,
-                                    cv2.BORDER_CONSTANT, value=(0, 0, 0))
+                                       0, image_raw.shape[0] % 2, 0, image_raw.shape[1] % 2,
+                                       cv2.BORDER_CONSTANT, value=(0, 0, 0))
 
         for channel in range(3):
-            coeffi_approx[channel], hvds[channel] = dwt2(image_YUV[:, :, channel], 'haar')
+            coeffi_approx[channel], hvds[channel] = dwt2(image_YUV[:, :, channel], wavelet)
             coeffi_approx_block[channel] = np.lib.stride_tricks.as_strided(
                 coeffi_approx[channel].astype(np.float32), coeffi_approx_block_size, strides
             )
@@ -151,7 +157,7 @@ def embed(cover_path, watermarked_path, wm, pwd: int):
 
             coeffi_approx_part[channel] = np.concatenate(np.concatenate(coeffi_approx_block[channel], 1), 1)
             covered_coeffi_approx[channel][:part_size[0], :part_size[1]] = coeffi_approx_part[channel]
-            covered_YUV[channel] = idwt2((covered_coeffi_approx[channel], hvds[channel]), "haar")
+            covered_YUV[channel] = idwt2((covered_coeffi_approx[channel], hvds[channel]), wavelet)
 
         covered_image_YUV = np.stack(covered_YUV, axis=2)
         covered_image_YUV = covered_image_YUV[:image_size[0], :image_size[1]]
@@ -182,22 +188,22 @@ def adjust_aspect_ratio(image_path, known_ratios=[(2, 3), (4, 3), (16, 9), (21, 
 
     return image
 
-def unembed(wm_pic_path, pwd: int, pattern=('123', 'abc')):
+def unembed(wm_pic_path, pwd: int, pattern=('123', 'abc'), wavelet='haar'):
     image_full = cv2.imread(wm_pic_path, flags=cv2.IMREAD_UNCHANGED)
     
     # sub_images = _split_image_from_center(image_full)
     sub_images = [image_full]
 
-    height, width = image_full.shape[:2]
-    gcd = math.gcd(width, height)
-    aspect_ratio = f"{width // gcd}:{height // gcd}"
-    print("Соотношение сторон:", aspect_ratio)
+    # height, width = image_full.shape[:2]
+    # gcd = math.gcd(width, height)
+    # aspect_ratio = f"{width // gcd}:{height // gcd}"
+    # print("Соотношение сторон:", aspect_ratio)
 
-    img = adjust_aspect_ratio(wm_pic_path)
-    height, width = img.shape[:2]
-    gcd = math.gcd(width, height)
-    aspect_ratio = f"{width // gcd}:{height // gcd}"
-    print("Соотношение сторон:", aspect_ratio)
+    # img = adjust_aspect_ratio(wm_pic_path)
+    # height, width = img.shape[:2]
+    # gcd = math.gcd(width, height)
+    # aspect_ratio = f"{width // gcd}:{height // gcd}"
+    # print("Соотношение сторон:", aspect_ratio)
 
     wms_from_blocks = []
     wms_from_blocks_alter = []
@@ -222,7 +228,10 @@ def unembed(wm_pic_path, pwd: int, pattern=('123', 'abc')):
                                        cv2.BORDER_CONSTANT, value=(0, 0, 0))
 
         for channel in range(3):
-            coeffi_approx[channel], hvds[channel] = dwt2(image_YUV[:, :, channel], 'haar')
+            coeffi_approx[channel], hvds[channel] = dwt2(image_YUV[:, :, channel], wavelet)
+            # plt.imshow(coeffi_approx[channel], cmap='gray')
+            # plt.title('Коэффициенты аппроксимации')
+            # plt.show()
             coeffi_approx_block[channel] = np.lib.stride_tricks.as_strided(
                 coeffi_approx[channel].astype(np.float32), coeffi_approx_block_size, strides
             )
@@ -244,6 +253,9 @@ def unembed(wm_pic_path, pwd: int, pattern=('123', 'abc')):
             tmp_res = []
             for i in range(block_num):
                 block, shuffler, i = coeffi_approx_block[channel][block_index[i]], shuffler_arr[i], i
+                # plt.imshow(block)
+                # plt.title('Коэффициенты аппроксимации')
+                # plt.show()
 
                 block_dct_shuffled = dct(block).flatten()[shuffler].reshape(block_size)
                 # block_dct_shuffled = dct(block)
@@ -262,9 +274,9 @@ def unembed(wm_pic_path, pwd: int, pattern=('123', 'abc')):
         for i in range(wm_size):
             wm_draft[i] = wm_blocks_bit[:, i::wm_size].mean()
 
-        wm_index = np.arange(wm_size)
-        np.random.RandomState(pwd).shuffle(wm_index)
-        wm_draft[wm_index] = wm_draft.copy()
+        # wm_index = np.arange(wm_size)
+        # np.random.RandomState(pwd).shuffle(wm_index)
+        # wm_draft[wm_index] = wm_draft.copy()
 
         # byte = ''.join(str((i >= 0.5) * 1) for i in wm_draft)
         # wm = bytes.fromhex(hex(int(byte, base=2))[2:]).decode('utf-8', errors='replace')
@@ -277,6 +289,7 @@ def unembed(wm_pic_path, pwd: int, pattern=('123', 'abc')):
         byte = ''.join(str((i >= 0.5) * 1) for i in wm_all_bits)
         wm = _bits_to_hex(byte)
         wms_from_blocks_alter.append(wm)
+        # print(wms_from_blocks_alter[0].split(pattern[0]))
         # print(wm.split(pattern[0]))
 
     string_counts = Counter(wms_from_blocks)

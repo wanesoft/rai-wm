@@ -21,31 +21,31 @@ arrr = [
     # ('./x22.png', './x22w.png', generate_hex_string(),),
     # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'666{str("3ef4e2c64cd507a8e3649e129b024951")}666'),
 
-    ('./x22.png', './x22w.png', f'{str(generate_hex_string())}'),
+    # ('./x22.png', './x22w.png', f'{str(generate_hex_string())}'),
 
-    ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
-    ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
-    ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
-    ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
-    ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
-    ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
-    ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
-    ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
-    ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
-    ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
-    ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
-    ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
-    ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
-    ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
-    ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
-    ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
-    ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
-    ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
-    ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
-    ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
-    ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
-    ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
-    ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
+    # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
+    # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
+    # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
+    # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
+    # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
+    # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
+    # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
+    # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
+    # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
+    # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
+    # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
+    # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
+    # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
+    # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
+    # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
+    # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
+    # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
+    # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
+    # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
+    # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
+    # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
+    # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
+    # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'{str(generate_hex_string())}'),
 
     # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'000{str(generate_hex_string())}000'), <<<----- !!!
 
@@ -56,8 +56,12 @@ arrr = [
     # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'666{str("7c681667759b599407c43f240cdd3b16")}666'),
     # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'666{str("d52de720708b05008459c438797c111a")}666'),
     # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f"6b41c9e799ba772a4a4c04b4efa88fb2"),
-    ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'123{str("ab41c9e799ba772a4a4c04b4efa88fb2")}abc'),
+    # ('./IMG_1861.jpeg', './IMG_1861w.jpeg', f'abc{str("ab41c9e799ba772a4a4c04b4efa88fb2")}123'),
+    ('./1.jpg', './1w.jpg', f'abc{str("ab41c9e799ba772a4a4c04b4efa88fb2")}123'),
+    # ('./x22.png', './x22w.png', f'abc{str("ab41c9e799ba772a4a4c04b4efa88fb2")}123'),
 ]
+
+CROP_COEF = 64
 
 for cover_img_path, watermarked_img_path, watermark_str in arrr:
     start_time = time.time()
@@ -67,16 +71,44 @@ for cover_img_path, watermarked_img_path, watermark_str in arrr:
     print(f'{watermark_str}\n{wm_text}')
     print("!WARNING") if watermark_str != wm_text else None
 
-    # image_full = cv2.imread(watermarked_img_path, flags=cv2.IMREAD_UNCHANGED)
-    # height, width = image_full.shape[:2]
-    # image_cropped = image_full[0:height, 32:width]
-    # cv2.imwrite(f"{watermarked_img_path}-edited.png", image_cropped)
-    # wm_text = unembed(f"{watermarked_img_path}-edited.png", 25645)
-    # print(f'{watermark_str}\n{wm_text}')
-    # print("!WARNING") if watermark_str != wm_text else None
+    print("Режем сверху")
+    image_full = cv2.imread(watermarked_img_path, flags=cv2.IMREAD_UNCHANGED)
+    height, width = image_full.shape[:2]
+    image_cropped = image_full[CROP_COEF:height, 0:width]
+    cv2.imwrite(f"{watermarked_img_path}-edited.png", image_cropped)
+    wm_text = unembed(f"{watermarked_img_path}-edited.png", 25645, pattern=(watermark_str[:3], watermark_str[-3:]))
+    print(f'{watermark_str}\n{wm_text}')
+    print("!WARNING") if watermark_str != wm_text else None
+
+    print("Режем снизу")
+    image_full = cv2.imread(watermarked_img_path, flags=cv2.IMREAD_UNCHANGED)
+    height, width = image_full.shape[:2]
+    image_cropped = image_full[0:height-CROP_COEF, 0:width]
+    cv2.imwrite(f"{watermarked_img_path}-edited.png", image_cropped)
+    wm_text = unembed(f"{watermarked_img_path}-edited.png", 25645, pattern=(watermark_str[:3], watermark_str[-3:]))
+    print(f'{watermark_str}\n{wm_text}')
+    print("!WARNING") if watermark_str != wm_text else None
+
+    print("Режем слева")
+    image_full = cv2.imread(watermarked_img_path, flags=cv2.IMREAD_UNCHANGED)
+    height, width = image_full.shape[:2]
+    image_cropped = image_full[0:height, CROP_COEF:width]
+    cv2.imwrite(f"{watermarked_img_path}-edited.png", image_cropped)
+    wm_text = unembed(f"{watermarked_img_path}-edited.png", 25645, pattern=(watermark_str[:3], watermark_str[-3:]))
+    print(f'{watermark_str}\n{wm_text}')
+    print("!WARNING") if watermark_str != wm_text else None
+
+    print("Режем справа")
+    image_full = cv2.imread(watermarked_img_path, flags=cv2.IMREAD_UNCHANGED)
+    height, width = image_full.shape[:2]
+    image_cropped = image_full[0:height, 0:width-CROP_COEF]
+    cv2.imwrite(f"{watermarked_img_path}-edited.png", image_cropped)
+    wm_text = unembed(f"{watermarked_img_path}-edited.png", 25645, pattern=(watermark_str[:3], watermark_str[-3:]))
+    print(f'{watermark_str}\n{wm_text}')
+    print("!WARNING") if watermark_str != wm_text else None
 
     # image_full = cv2.imread(watermarked_img_path, flags=cv2.IMREAD_UNCHANGED)
-    # height, width = image_full.shape[:2] 
+    # height, width = image_full.shape[:2]
     # image_cropped = image_full[0:height-256, 0:width]
     # cv2.imwrite(f"{watermarked_img_path}-edited.png", image_cropped)
     # wm_text = unembed(f"{watermarked_img_path}-edited.png", 25645)
